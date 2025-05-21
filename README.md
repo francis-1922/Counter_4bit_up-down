@@ -42,7 +42,8 @@ Functional Simulation:
       
 	After this you can see the window like below 
 
-![Screenshot (4)](https://github.com/user-attachments/assets/1d77a10c-f0a1-41a2-b894-5e67a37b9b87)
+
+![image](https://github.com/user-attachments/assets/33b4e0bb-5a9e-441f-9889-97da2080e924)
 
 ## Fig 2: Invoke the Cadence Environment
 
@@ -56,8 +57,29 @@ Functional Simulation:
 (Note : File name should be with HDL Extension)
 
 ### Verilog code for 4-Bit Up-Down Counter:
+```
 
 */Program  for  4-Bit Up-Down Counter
+module up_down_counter (
+    input wire clk,        // Clock input
+    input wire reset,      // Asynchronous reset
+    input wire up_down,    // Control signal: 1 = count up, 0 = count down
+    output reg [3:0] count // 4-bit counter output
+);
+always @(posedge clk or posedge reset) begin
+    if (reset) begin
+        count <= 4'b0000; // Reset the counter
+    end else begin
+        if (up_down) begin
+            count <= count + 1; // Count up
+        end else begin
+            count <= count - 1; // Count down
+        end
+    end
+end
+
+endmodule
+```
 
 	Use Save option or Ctrl+S to save the code or click on the save option from the top most right corner and close the text file.
 
@@ -66,9 +88,46 @@ Functional Simulation:
 	Similarly, create your test bench using gedit <filename_tb>.v or <filename_tb>.vhdl to open a new blank document (4bitup_down_count_tb.v).
 
 ### Test-bench code for 4-Bit Up-Down Counter:
+```
 
 */Test bench Program  for  4-Bit Up-Down Counter
+`timescale 1ns / 1ps
 
+module tb_up_down_counter;
+    reg clk;
+    reg reset;
+    reg up_down;
+    wire [3:0] count;
+    up_down_counter uut (
+        .clk(clk),
+        .reset(reset),
+        .up_down(up_down),
+        .count(count)
+    );
+    always #5 clk = ~clk;
+
+    initial begin 
+        clk = 0;
+        reset = 1;
+        up_down = 1; // Start with count up
+        #10;
+        reset = 0;
+        #100;
+        up_down = 0;
+        #100;
+        reset = 1;
+        #10;
+        reset = 0;
+        up_down = 1;
+        #50;
+        $finish;
+    end
+    initial begin
+        $monitor("Time = %0t | Reset = %b | Up_Down = %b | Count = %b", 
+                  $time, reset, up_down, count);
+    end
+endmodule
+```
 ### To Launch Simulation tool
 	linux:/> nclaunch -new&            // “-new” option is used for invoking NCVERILOG for the first time for any design
 
@@ -86,6 +145,7 @@ Click the cds.lib file and save the file by clicking on Save option
 
 ![Screenshot (5)](https://github.com/user-attachments/assets/3c6efc14-33f9-4160-b552-901f0035cf0a)
 
+
 ## Fig 4: cds.lib file Creation
 
 	Save cds.lib file and select the correct option for cds.lib file format based on the  HDL Language and Libraries used.
@@ -93,6 +153,8 @@ Click the cds.lib file and save the file by clicking on Save option
 	Select “Don’t include any libraries (verilog design)” from “New cds.lib file” and click on “OK” as in below figure
 
 	We are simulating verilog design without using any libraries
+
+![image](https://github.com/user-attachments/assets/3babc091-79e1-4a3b-8ac8-4fed6b2801df)
 
 ## Fig 5: Selection of Don’t include any libraries
 
@@ -105,6 +167,7 @@ Click the cds.lib file and save the file by clicking on Save option
 	Worklib is the directory where all the compiled codes are stored while Snapshot will have output of elaboration which in turn goes for simulation
 
 ![Screenshot (8)](https://github.com/user-attachments/assets/d9bd4c98-7de8-4b06-8b63-07cab988d835)
+
 
 ## Fig 6: Nclaunch Window
 
@@ -179,7 +242,7 @@ It contains statements that map logical library names to their physical director
 
 ## Fig 9: Design Browser window for simulation
 
-![Screenshot (13)](https://github.com/user-attachments/assets/157f3e84-9b29-47e8-b74c-22aaa7144956)
+![Screenshot (15)](https://github.com/user-attachments/assets/332a79da-a25c-42e9-9891-9d8d6d6b4762)
 
 ## Fig 10: Simulation Waveform Window
 
